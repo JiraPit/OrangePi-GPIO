@@ -1,19 +1,23 @@
 use gpio_cdev::{Chip, LineRequestFlags};
-use tokio::time;
+// use tokio::time;
 
 #[tokio::main]
-async fn main() -> ! {
-    // Get the chip and request a line
-    let mut chip = Chip::new("/dev/gpiochip0").unwrap();
-    let handle = chip
-        .get_line(5)
-        .unwrap()
-        .request(LineRequestFlags::INPUT, 0, "read-input")
-        .unwrap();
-
-    // Repeatedly read the input value
-    loop {
-        println!("Value: {:?}", handle.get_value().unwrap());
-        time::sleep(time::Duration::from_secs(1)).await;
+async fn main() {
+    // List available GPIO chips
+    for i in 0..5 {
+        // Check first 5 possible chips
+        match Chip::new(format!("/dev/gpiochip{}", i)) {
+            Ok(chip) => {
+                println!(
+                    "Found chip {}: {} with {} lines",
+                    i,
+                    chip.name(),
+                    chip.num_lines()
+                );
+            }
+            Err(_) => {
+                println!("No chip at gpiochip{}", i);
+            }
+        }
     }
 }
