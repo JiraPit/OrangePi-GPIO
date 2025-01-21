@@ -3,28 +3,13 @@ use tokio::time;
 
 #[tokio::main]
 async fn main() {
-    for i in 0..10 {
-        let mut chip = Chip::new(format!("/dev/gpiochip{i}")).unwrap();
-        match chip.get_line(13) {
-            Ok(line) => {
-                println!("Line: {:?} connected", line);
-            }
-            Err(e) => {
-                println!("Error: {}", e);
-            }
-        };
-        match chip.get_line(7) {
-            Ok(line) => {
-                println!("Line: {:?} connected", line);
-            }
-            Err(e) => {
-                println!("Error: {}", e);
-            }
-        };
+    let mut chip = Chip::new("/dev/gpiochip0").unwrap();
+    let line = chip.get_line(13).unwrap();
+    let handle = line
+        .request(LineRequestFlags::INPUT, 0, "read-input")
+        .unwrap();
+    loop {
+        println!("Value: {:?}", handle.get_value().unwrap());
+        time::sleep(time::Duration::from_secs(1)).await;
     }
-
-    // loop {
-    //     println!("Value: {:?}", handle.get_value().unwrap());
-    //     time::sleep(time::Duration::from_secs(1)).await;
-    // }
 }
