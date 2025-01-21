@@ -6,7 +6,7 @@ async fn main() -> ! {
     // Get the chip and request a line
     let mut chip = Chip::new("/dev/gpiochip0").unwrap();
     let handle = chip
-        .get_line(4)
+        .get_line(119)
         .unwrap()
         .request(LineRequestFlags::INPUT, 0, "read-input")
         .unwrap();
