@@ -31,6 +31,11 @@ async fn main() {
         }
     };
 
+    // List all lines information
+    for line in chip.lines() {
+        println!("{:?}", line);
+    }
+
     // Get the specified line
     let line = match chip.get_line(line_number) {
         Ok(line) => line,
