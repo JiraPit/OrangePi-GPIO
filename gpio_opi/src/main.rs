@@ -4,7 +4,7 @@ use tokio::time;
 #[tokio::main]
 async fn main() {
     for i in 0..10 {
-        let mut chip = Chip::new("/dev/gpiochip0").unwrap();
+        let mut chip = Chip::new(format!("/dev/gpiochip{i}")).unwrap();
         match chip.get_line(13) {
             Ok(line) => {
                 println!("Line: {:?} connected", line);
