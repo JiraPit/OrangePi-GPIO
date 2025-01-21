@@ -5,26 +5,22 @@ use tokio::time;
 async fn main() {
     for i in 0..10 {
         let mut chip = Chip::new("/dev/gpiochip0").unwrap();
-        match chip.get_line(118) {
-            Ok(line) => line,
+        match chip.get_line(13) {
+            Ok(line) => {
+                println!("Line: {:?} connected", line);
+            }
             Err(e) => {
                 println!("Error: {}", e);
-                continue;
             }
         };
-        match Chip::new(format!("/dev/gpiochip{}", i)) {
-            Ok(chip) => {
-                println!(
-                    "Found chip {}: {} with {} lines",
-                    i,
-                    chip.name(),
-                    chip.num_lines()
-                );
+        match chip.get_line(7) {
+            Ok(line) => {
+                println!("Line: {:?} connected", line);
             }
-            Err(_) => {
-                println!("No chip at gpiochip{}", i);
+            Err(e) => {
+                println!("Error: {}", e);
             }
-        }
+        };
     }
 
     // loop {
