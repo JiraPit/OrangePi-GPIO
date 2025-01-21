@@ -23,7 +23,7 @@ async fn main() {
     };
 
     // Open the GPIO chip
-    let mut chip = match Chip::new("/dev/gpiochip0") {
+    let mut chip = match Chip::new(format!("/dev/gpiochip{line_number}")) {
         Ok(chip) => chip,
         Err(e) => {
             eprintln!("Failed to open GPIO chip: {}", e);
@@ -33,33 +33,33 @@ async fn main() {
 
     // List all lines information
     for line in chip.lines() {
-        println!("{:?}", line);
+        println!("{:?}", line.info());
     }
 
-    // Get the specified line
-    let line = match chip.get_line(line_number) {
-        Ok(line) => line,
-        Err(e) => {
-            eprintln!("Failed to get GPIO line {}: {}", line_number, e);
-            std::process::exit(1);
-        }
-    };
-
-    // Request the line as input
-    let handle = match line.request(LineRequestFlags::INPUT, 0, "read-input") {
-        Ok(handle) => handle,
-        Err(e) => {
-            eprintln!("Failed to request GPIO line: {}", e);
-            std::process::exit(1);
-        }
-    };
-
-    // Continuously read and print the line value
-    loop {
-        match handle.get_value() {
-            Ok(value) => println!("Value of line {}: {:?}", line_number, value),
-            Err(e) => eprintln!("Failed to get line value: {}", e),
-        }
-        time::sleep(time::Duration::from_secs(1)).await;
-    }
+    // // Get the specified line
+    // let line = match chip.get_line(line_number) {
+    //     Ok(line) => line,
+    //     Err(e) => {
+    //         eprintln!("Failed to get GPIO line {}: {}", line_number, e);
+    //         std::process::exit(1);
+    //     }
+    // };
+    //
+    // // Request the line as input
+    // let handle = match line.request(LineRequestFlags::INPUT, 0, "read-input") {
+    //     Ok(handle) => handle,
+    //     Err(e) => {
+    //         eprintln!("Failed to request GPIO line: {}", e);
+    //         std::process::exit(1);
+    //     }
+    // };
+    //
+    // // Continuously read and print the line value
+    // loop {
+    //     match handle.get_value() {
+    //         Ok(value) => println!("Value of line {}: {:?}", line_number, value),
+    //         Err(e) => eprintln!("Failed to get line value: {}", e),
+    //     }
+    //     time::sleep(time::Duration::from_secs(1)).await;
+    // }
 }
